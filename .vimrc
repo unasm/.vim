@@ -267,3 +267,34 @@ hi CursorColumn cterm=NONE ctermbg=cyan  ctermfg=white guibg=darkened guifg=whit
 if !did_filetype()
 	    au BufRead,BufNewFile *             setfiletype text
 endif
+"打开javascript折叠
+let b:javascript_fold=1
+" 打开javascript对dom、html和css的支持
+let javascript_enable_domhtmlcss=1
+"let g:jslint_command = 'jsl' 
+"let g:jslint_command_options = '-nofilelisting -nocontext -conf "~/.jsl.conf" -nosummary -nologo -process'
+"autocmd BufWritePost,FileWritePost *.js calJsonLint()
+"map <F6> :call	JsonLint()<cr>
+"设置javascriptlint
+"autocmd FileType javascript set makeprg=/usr/local/bin/jsl -nologo -nofilelisting -nosummary -nocontext -conf '~/.jsl.conf' -process %
+"autocmd FileType javascript set errorformat=%f(%l): %m
+"autocmd FileType javascript inoremap <silent> <F9> <C-O>:make<CR>
+"autocmd FileType javascript map <silent> <F9> :make<CR>
+"jslint 尝试失败
+" css辞典
+au filetype css call AddCssList()
+function AddCssList()
+	set dictionary-=~/.vim/dict/csslist.txt dictionary+=~/.vim/dict/csslist.txt
+	set complete-=k complete+=k
+endfunction
+"php 词典
+au filetype php call AddPHP()
+function AddPHP()
+	set dictionary-=~/.vim/dict/php_funclist.txt dictionary+=~/.vim/dict/php_funclist.txt
+	set complete-=k complete+=k
+endfunction
+au filetype javascript  call AddJavaScript()
+function AddJavaScript()
+	set dictionary-=~/.vim/dict/javascript.dict dictionary+=~/.vim/dict/javascript.dict
+	set complete-=k complete+=k
+endfunction
