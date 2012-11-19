@@ -298,3 +298,5 @@ function AddJavaScript()
 	set dictionary-=~/.vim/dict/javascript.dict dictionary+=~/.vim/dict/javascript.dict
 	set complete-=k complete+=k
 endfunction
+"let jshint_highlight_color = 'DarkGray'
+let d8_command = '/usr/local/bin/d8'
