@@ -1,5 +1,5 @@
 set shortmess=atI   " 启动的时候不显示那个援助乌干达儿童的提示  
-"winpos 5 5          " 设定窗口位置  
+"awinpos 5 5          " 设定窗口位置  
 "set lines=40 columns=155    " 设定窗口大小  
 set nu              " 显示行号  
 set go=             " 不要图形按钮  
@@ -260,8 +260,8 @@ set guioptions-=L
 set guioptions+=m
 
 
-"set cursorline
-hi CursorLine   cterm=NONE ctermbg=magenta  ctermfg=white guibg=darkened guifg=white
+set cursorline
+hi CursorLine   cterm=NONE ctermbg=magenta  ctermfg=white guibg=NONE guifg=white gui=underline
 set cursorcolumn
 hi CursorColumn cterm=NONE ctermbg=cyan  ctermfg=white guibg=darkened guifg=white
 if !did_filetype()
@@ -291,6 +291,7 @@ endfunction
 au filetype php call AddPHP()
 function AddPHP()
 	set dictionary-=~/.vim/dict/php_funclist.txt dictionary+=~/.vim/dict/php_funclist.txt
+	set dictionary-=~/.vim/dict/ci_funclist.txt dictionary+=~/.vim/dict/ci_funclist.txt "支持ci框架
 	set complete-=k complete+=k
 endfunction
 au filetype javascript  call AddJavaScript()
@@ -300,3 +301,4 @@ function AddJavaScript()
 endfunction
 "let jshint_highlight_color = 'DarkGray'
 let d8_command = '/usr/local/bin/d8'
+inoremap PHPT author:<tab><tab><tab>unasm<cr>email:<tab><tab><tab>douunasm@gmail.com<cr>last_modefied:<tab><c-r>=strftime("%Y/%m/%d %X")<cr><CR>
