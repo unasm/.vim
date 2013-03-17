@@ -1,3 +1,4 @@
+"可不可以让文件每隔一定时间自动保
 set shortmess=atI   " 启动的时候不显示那个援助乌干达儿童的提示  
 "awinpos 5 5          " 设定窗口位置  
 "set lines=40 columns=155    " 设定窗口大小  
@@ -10,43 +11,43 @@ set guifont=Courier_New:h10:cANSI   " 设置字体
 syntax on           " 语法高亮  
 autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
 autocmd InsertEnter * se cul    " 用浅色高亮当前行  
-"set ruler           " 显示标尺  
+set ruler           " 显示标尺  
 set showcmd         " 输入的命令显示出来，看的清楚些  
 set cmdheight=1     " 命令行（在状态行下）的高度，设置为1  
-"cmd BufNewFile *.cpp,*.[ch],*.sh,*.java exec ":call TitleSet()" 
+"cmd BufNewFile *.cpp,*.[ch],*.sh,*.java exec :call TitleSet() 
 ""定义函数SetTitle，自动插入文件头 
 func TitleSet() 
-    "如果文件类型为.sh文件 
-    if &filetype == 'sh' 
-        call setline(1,"\#########################################################################") 
-        call append(line("."), "\# File Name: ".expand("%")) 
-        call append(line(".")+1, "\# Author: ma6174") 
-        call append(line(".")+2, "\# mail: ma6174@163.com") 
-        call append(line(".")+3, "\# Created Time: ".strftime("%c")) 
-        call append(line(".")+4, "\#########################################################################") 
-        call append(line(".")+5, "\#!/bin/bash") 
-        call append(line(".")+6, "") 
-    else 
-        call setline(1, "/*************************************************************************") 
-        call append(line("."), "    > File Name: ".expand("%")) 
-        call append(line(".")+1, "    > Author: ma6174") 
-        call append(line(".")+2, "    > Mail: ma6174@163.com ") 
-        call append(line(".")+3, "    > Created Time: ".strftime("%c")) 
-        call append(line(".")+4, " ************************************************************************/") 
-        call append(line(".")+5, "")
-    endif
-    if &filetype == 'cpp'
-        call append(line(".")+6, "#include<iostream>")
-        call append(line(".")+7, "using namespace std;")
-        call append(line(".")+8, "")
-    endif
-    if &filetype == 'c'
-        call append(line(".")+6, "#include<stdio.h>")
-        call append(line(".")+7, "")
-    endif
-    "新建文件后，自动定位到文件末尾
-    autocmd BufNewFile * normal G
-endfunc 
+"如果文件类型为.sh文件 
+if &filetype == 'sh' 
+	call setline(1,"\#########################################################################") 
+	call append(line("."), "\# File Name: ".expand("%")) 
+	call append(line(".")+1, "\# Author: ma6174") 
+	call append(line(".")+2, "\# mail: ma6174@163.com") 
+	call append(line(".")+3, "\# Created Time: ".strftime("%c")) 
+	call append(line(".")+4, "\#########################################################################") 
+	call append(line(".")+5, "\#!/bin/bash") 
+	call append(line(".")+6, "") 
+else 
+	call setline(1, "/*************************************************************************") 
+	call append(line("."), "    > File Name: ".expand("%")) 
+	call append(line(".")+1, "    > Author: ma6174") 
+	call append(line(".")+2, "    > Mail: ma6174@163.com ") 
+	call append(line(".")+3, "    > Created Time: ".strftime("%c")) 
+	call append(line(".")+4, " ************************************************************************/") 
+	call append(line(".")+5, "")
+endif
+if &filetype == 'cpp'
+	call append(line(".")+6, "#include<iostream>")
+	call append(line(".")+7, "using namespace std;")
+	call append(line(".")+8, "")
+endif
+if &filetype == 'c'
+	call append(line(".")+6, "#include<stdio.h>")
+	call append(line(".")+7, "")
+endif
+"新建文件后，自动定位到文件末尾
+autocmd BufNewFile * normal G
+endfunc
 " i don't understand that
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "键盘命令
@@ -56,6 +57,7 @@ nmap <leader>f :find<cr>
 map <C-A> ggVGY
 map! <C-A> <Esc>ggVGY
 map <F12> gg=G
+
 " 选中状态下 Ctrl+c 复制
 vmap <C-c> "+y
 "去空行  
@@ -65,10 +67,13 @@ map <c-t> :tabnew .<CR>
 "打开树状文件目录列出当前目录文件.这个算是比较重要的功能，保留
 "C，C++ 按F5编译运行
 map <F5> :call CompileRunGcc()<CR>
+"inoremap <end>  <end><esc>a;
+inoremap <c-v> <esc>:w<cr>
+"自动保存文件
 func! CompileRunGcc()
     exec "w"
     if &filetype == 'c'
-        exec "!g++ % -o %<"
+        exec "!gcc % -o %<"
         exec "! ./%<"
     elseif &filetype == 'cpp'
         exec "!g++ % -o %<"
@@ -188,7 +193,7 @@ set mouse=a
 set selection=exclusive
 set selectmode=mouse,key
 " 通过使用: commands命令，告诉我们文件的哪一行被改变过
-"set report=0
+set report=0
 " 在被分割的窗口间显示空白，便于阅读
 set fillchars=vert:\ ,stl:\ ,stlnc:\
 " 高亮显示匹配的括号
@@ -248,12 +253,10 @@ let Tlist_WinWidth = 13
 "let g:miniBufExplModSelTarget = 1   
 nnoremap <silent><F8><F8> :TlistToggle<cr> 
 "觉得使用一个<F8>有点浪费了这个快捷键1
-inoremap l<space> =
+inoremap l<space> <space>=<space>
 inoremap ll<space> l
-inoremap PPP <?=?><left><left>
 inoremap i<space> +
 inoremap ii<space> i
-inoremap iia <s-a>
 set guioptions-=T  
 set guioptions+=r  
 set guioptions-=L  
@@ -299,6 +302,21 @@ function AddJavaScript()
 	set dictionary-=~/.vim/dict/javascript.dict dictionary+=~/.vim/dict/javascript.dict
 	set complete-=k complete+=k
 endfunction
-"let jshint_highlight_color = 'DarkGray'
-let d8_command = '/usr/local/bin/d8'
+"let d8_command = '/usr/local/bin/d8'
 inoremap PHPT author:<tab><tab><tab>unasm<cr>email:<tab><tab><tab>douunasm@gmail.com<cr>last_modefied:<tab><c-r>=strftime("%Y/%m/%d %X")<cr><CR>
+inoremap NOW  <c-r>=strftime("%Y/%m/%d %X")<cr>
+
+
+func AppendQuote()
+	if &filetype != "html" 
+		let line = getline(".")
+		"call cursor('.')
+		if((line[strlen(line)-1]!=";")&&(line[strlen(line)-1]!=">")&&(line[strlen(line)-1]!="{")&&(line[strlen(line)-1]!="}"))
+			exec "normal $a;\<ESC>"
+		else 
+			exec "normal $"
+		endif
+	endif
+return "\<esc>A"
+endfunc
+inoremap <silent><end> <C-R>=AppendQuote()<CR>
