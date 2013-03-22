@@ -245,7 +245,7 @@ let Tlist_Show_One_File = 1 "不同时显示多个文件的tag，只显示当前
 let Tlist_Exit_OnlyWindow = 1 "如果taglist窗口是最后一个窗口，则退出vim 
 let Tlist_GainFocus_On_ToggleOpen = 1
 let Tlist_Use_Right_Window = 1 "在右侧窗口中显示taglist窗口
-let Tlist_WinWidth = 13
+let Tlist_WinWidth = 18
 " minibufexpl插件的一般设置
 "let g:miniBufExplMapWindowNavVim = 1
 "let g:miniBufExplMapWindowNavArrows = 1
@@ -310,8 +310,9 @@ inoremap NOW  <c-r>=strftime("%Y/%m/%d %X")<cr>
 func AppendQuote()
 	if &filetype != "html" 
 		let line = getline(".")
+		let num = strlen(line)-1
 		"call cursor('.')
-		if((line[strlen(line)-1]!=";")&&(line[strlen(line)-1]!=">")&&(line[strlen(line)-1]!="{")&&(line[strlen(line)-1]!="}"))
+		if((line[num]!=";")&&(line[num]!=">")&&(line[num]!="{")&&(line[num]!="}")&&((line[num]!="/")&&(line[num-1]!="*")))
 			exec "normal $a;\<ESC>"
 		else 
 			exec "normal $"
