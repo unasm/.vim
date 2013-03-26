@@ -321,4 +321,3 @@ func AppendQuote()
 return "\<esc>A"
 endfunc
 inoremap <silent><end> <C-R>=AppendQuote()<CR>
-testing
