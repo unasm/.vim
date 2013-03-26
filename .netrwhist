@@ -1,6 +1,10 @@
+tesing
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_cnt =7
 let g:netrw_dirhist_1='/home/tianyi/.gnome2'
 let g:netrw_dirhist_2='/home/tianyi/.gnome2/accels'
 let g:netrw_dirhist_3='/home/tianyi/.gnome2'
 let g:netrw_dirhist_4='/home/tianyi'
+let g:netrw_dirhist_5='/var/www/html/edian/ci/js/xheditor_skin/default'
+let g:netrw_dirhist_6='/var/www/html/edian/ci/js/xheditor_skin/nostyle'
+let g:netrw_dirhist_7='/var/www/html/edian/ci/application/Document'
