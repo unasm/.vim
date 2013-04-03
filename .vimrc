@@ -205,16 +205,8 @@ set scrolloff=5
 " 为C程序提供自动缩进
 set smartindent
 " 高亮显示普通txt文件（需要txt.vim脚本）
-au BufRead,BufNewFile *  setfiletype txt
+"au BufRead,BufNewFile *  setfiletype txt
 "自动补全
-inoremap ] <c-r>=ClosePair(']')<CR>
-function! ClosePair(char)
-    if getline('.')[col('.') - 1] == a:char
-        return "\<Right>"
-    else
-        return a:char
-    endif
-endfunction
 filetype plugin indent on 
 "打开文件类型检测, 加了这句才可以用智能补全
 set completeopt=longest,menu
@@ -224,7 +216,7 @@ set completeopt=longest,menu
 "let Tlist_Sort_Type = "name"    " 按照名称排序  
 "let Tlist_Inc_Winwidth = 0  "禁止自动改变当前vim窗口
 "let Tlist_Use_SingleClick=1 "点击跳转
-let Tlist_Compart_Format = 1    " 压缩方式  
+"let Tlist_Compart_Format = 1    " 压缩方式  
 "let Tlist_Exist_OnlyWindow = 1  " 如果只有一个buffer，kill窗口也kill掉buffer  
 "let Tlist_Close_On_Select=1 "选择后自动关闭,很好的功能
 "let Tlist_File_Fold_Auto_Close = 0  " 不要关闭其他文件的tags  
@@ -232,7 +224,7 @@ let Tlist_Compart_Format = 1    " 压缩方式
 "autocmd FileType h,cpp,cc,c set tags+=D:\tools\cpp\tags  
 "let Tlist_Show_One_File=1            "不同时显示多个文件的tag，只显示当前文件的
 "设置tags  
-set tags=tags  
+"set tags=tags  
 "set autochdir 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "其他东东
@@ -241,11 +233,11 @@ set tags=tags
 " Tag list (ctags) 
 """""""""""""""""""""""""""""""" 
 "let Tlist_Ctags_Cmd = '/usr/local/bin/ctags' 
-let Tlist_Show_One_File = 1 "不同时显示多个文件的tag，只显示当前文件的 ,0,或许就是显示多个文件的吧
-let Tlist_Exit_OnlyWindow = 1 "如果taglist窗口是最后一个窗口，则退出vim 
-let Tlist_GainFocus_On_ToggleOpen = 1
-let Tlist_Use_Right_Window = 1 "在右侧窗口中显示taglist窗口
-let Tlist_WinWidth = 18
+"let Tlist_Show_One_File = 1 "不同时显示多个文件的tag，只显示当前文件的 ,0,或许就是显示多个文件的吧
+"let Tlist_Exit_OnlyWindow = 1 "如果taglist窗口是最后一个窗口，则退出vim 
+"let Tlist_GainFocus_On_ToggleOpen = 1
+"let Tlist_Use_Right_Window = 1 "在右侧窗口中显示taglist窗口
+"let Tlist_WinWidth = 18
 " minibufexpl插件的一般设置
 "let g:miniBufExplMapWindowNavVim = 1
 "let g:miniBufExplMapWindowNavArrows = 1
@@ -267,14 +259,14 @@ set cursorline
 hi CursorLine   cterm=NONE ctermbg=magenta  ctermfg=white guibg=NONE guifg=white gui=underline
 set cursorcolumn
 hi CursorColumn cterm=NONE ctermbg=cyan  ctermfg=white guibg=darkened guifg=white
-if !did_filetype()
-	    au BufRead,BufNewFile *             setfiletype text
-endif
+"if !did_filetype()
+"	    au BufRead,BufNewFile *             setfiletype text
+"endif
 "打开javascript折叠
 let b:javascript_fold=1
 " 打开javascript对dom、html和css的支持
 let javascript_enable_domhtmlcss=1
-"let g:jslint_command = 'jsl' 
+let g:jslint_command = 'jsl' 
 "let g:jslint_command_options = '-nofilelisting -nocontext -conf "~/.jsl.conf" -nosummary -nologo -process'
 "autocmd BufWritePost,FileWritePost *.js calJsonLint()
 "map <F6> :call	JsonLint()<cr>

@@ -1,6 +1,10 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_cnt =8
 let g:netrw_dirhist_1='/home/tianyi/.gnome2'
 let g:netrw_dirhist_2='/home/tianyi/.gnome2/accels'
 let g:netrw_dirhist_3='/home/tianyi/.gnome2'
 let g:netrw_dirhist_4='/home/tianyi'
+let g:netrw_dirhist_5='/var/www/html/edian/ci/application/Document'
+let g:netrw_dirhist_6='/home/tianyi/.vim/bundle/lint.vim'
+let g:netrw_dirhist_7='/home/tianyi/.vim/bundle'
+let g:netrw_dirhist_8='/home/tianyi/.vim/bundle/lint.vim'
