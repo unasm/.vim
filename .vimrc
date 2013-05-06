@@ -9,45 +9,65 @@ colorscheme koehler
 set nowrap
 set guifont=Courier_New:h10:cANSI   " 设置字体  
 syntax on           " 语法高亮  
-autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
-autocmd InsertEnter * se cul    " 用浅色高亮当前行  
+"autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
+"autocmd InsertEnter * se cul    " 用浅色高亮当前行  
 set ruler           " 显示标尺  
 set showcmd         " 输入的命令显示出来，看的清楚些  
 set cmdheight=1     " 命令行（在状态行下）的高度，设置为1  
-"cmd BufNewFile *.cpp,*.[ch],*.sh,*.java exec :call TitleSet() 
+autocmd BufNewFile *.php,*.cpp,*.[ch],*.sh,*.java ks|call TitleSet()|'s
 ""定义函数SetTitle，自动插入文件头 
 func TitleSet() 
-"如果文件类型为.sh文件 
-if &filetype == 'sh' 
-	call setline(1,"\#########################################################################") 
-	call append(line("."), "\# File Name: ".expand("%")) 
-	call append(line(".")+1, "\# Author: ma6174") 
-	call append(line(".")+2, "\# mail: ma6174@163.com") 
-	call append(line(".")+3, "\# Created Time: ".strftime("%c")) 
-	call append(line(".")+4, "\#########################################################################") 
-	call append(line(".")+5, "\#!/bin/bash") 
-	call append(line(".")+6, "") 
-else 
-	call setline(1, "/*************************************************************************") 
-	call append(line("."), "    > File Name: ".expand("%")) 
-	call append(line(".")+1, "    > Author: ma6174") 
-	call append(line(".")+2, "    > Mail: ma6174@163.com ") 
-	call append(line(".")+3, "    > Created Time: ".strftime("%c")) 
-	call append(line(".")+4, " ************************************************************************/") 
-	call append(line(".")+5, "")
-endif
-if &filetype == 'cpp'
-	call append(line(".")+6, "#include<iostream>")
-	call append(line(".")+7, "using namespace std;")
-	call append(line(".")+8, "")
-endif
-if &filetype == 'c'
-	call append(line(".")+6, "#include<stdio.h>")
-	call append(line(".")+7, "")
-endif
-"新建文件后，自动定位到文件末尾
-autocmd BufNewFile * normal G
+	"如果文件类型为.sh文件 
+	let mail = "douunasm@gmail.com"
+	let author = "unasm"
+	let time = strftime("%F %T")
+	if &filetype == 'sh' 
+		call setline(1,"\#########################################################################") 
+		call append(line("."), "\# File Name: ".expand("%")) 
+		call append(line(".")+1, "\# Author :".unasm) 
+		call append(line(".")+2, "\# mail: ".mail) 
+		call append(line(".")+3, "\# Last_Modified: ".time) 
+		call append(line(".")+4, "\#########################################################################") 
+		call append(line(".")+5, "\#!/bin/bash") 
+		call append(line(".")+6, "") 
+	elseif &filetype == 'php' 
+		call setline(1, "<?php") 
+		call append(line("."), "/*************************************************************************") 
+		call append(line(".")+1, "    > File Name: ".expand("%")) 
+		call append(line(".")+2, "    > Author: ".author) 
+		call append(line(".")+3, "    > Mail: ".mail) 
+		call append(line(".")+4, "    > Last_Modified: ".time) 
+		call append(line(".")+5, " ************************************************************************/") 
+		call append(line(".")+6, "")
+		call append(line(".")+7, "?>")
+		call cursor("6",0)
+	else 
+		call setline(1, "/*************************************************************************") 
+		call append(line("."), "    > File Name: ".expand("%")) 
+		call append(line(".")+1, "    > Author: ".author) 
+		call append(line(".")+2, "    > Mail: ".mail) 
+		call append(line(".")+3, "    > Last_Modified: ".time) 
+		call append(line(".")+4, " ************************************************************************/") 
+		call append(line(".")+5, "")
+	endif
+	if &filetype == 'cpp'
+		call append(line(".")+6, "#include<iostream>")
+		call append(line(".")+7, "using namespace std;")
+		call append(line(".")+8, "")
+	endif
+	if &filetype == 'c'
+		call append(line(".")+6, "#include<stdio.h>")
+		call append(line(".")+7, "")
+	endif
+	"新建文件后，自动定位到文件末尾
 endfunc
+"这个函数的作用就是自动修改Last_Modified的时间，格式上面自动添加注释的时间格式相同
+autocmd BufWritePre,FileWritePre *.php ks|call LastModified()
+fun LastModified()
+	let l = line("$")
+	let time = strftime("%F %T")
+	exe "1," . l . 'g/^\s*\(\*\|#\|>\|"\|\/\/\)\?\s*[L]ast_Modified:\s/s/^\(\s*\(\*\|#\|>\|"\|\/\/\)\?\s*[L]ast_Modified:\s\).*/\1'.time
+endfun
 " i don't understand that
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "键盘命令
@@ -71,28 +91,28 @@ map <F5> :call CompileRunGcc()<CR>
 inoremap <c-v> <esc>:w<cr>
 "自动保存文件
 func! CompileRunGcc()
-    exec "w"
-    if &filetype == 'c'
-        exec "!gcc % -o %<"
-        exec "! ./%<"
-    elseif &filetype == 'cpp'
-        exec "!g++ % -o %<"
-        exec "! ./%<"
-    elseif &filetype == 'java' 
-        exec "!javac %" 
-        exec "!java %<"
-    elseif &filetype == 'sh'
-        :!./%
+	exec "w"
+	if &filetype == 'c'
+		exec "!gcc % -o %<"
+		exec "! ./%<"
+	elseif &filetype == 'cpp'
+		exec "!g++ % -o %<"
+		exec "! ./%<"
+	elseif &filetype == 'java' 
+		exec "!javac %" 
+		exec "!java %<"
+	elseif &filetype == 'sh'
+		:!./%
 	elseif &filetype == 'php'
 		exec "!php -l %"
-    endif
+	endif
 endfunc
 "C,C++的调试
 map <F6> :call Rungdb()<CR>
 func! Rungdb()
-    exec "w"
-    exec "!g++ % -g -o %<"
-    exec "!gdb ./%<"
+	exec "w"
+	exec "!g++ % -g -o %<"
+	exec "!gdb ./%<"
 endfunc
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 ""实用设置
@@ -117,7 +137,7 @@ set ruler                   " 打开状态栏标尺
 set magic                   " 设置魔术
 set guioptions-=T           " 隐藏工具栏
 set guioptions-=m           " 隐藏菜单栏
-"set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ %c:%l/%L%)\
+set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ %c:%l/%L%)\
 " 设置在状态行显示的信息
 set foldcolumn=0
 set foldmethod=indent 
@@ -148,7 +168,7 @@ set number
 " 历史记录数
 set history=1000
 "禁止生成临时文件
-set nobackup
+"set nobackup
 set noswapfile
 "搜索忽略大小写
 set ignorecase
@@ -190,12 +210,14 @@ set backspace=2
 set whichwrap+=<,>,h,l
 " 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
 set mouse=a
+set lazyredraw
 set selection=exclusive
 set selectmode=mouse,key
 " 通过使用: commands命令，告诉我们文件的哪一行被改变过
 set report=0
 " 在被分割的窗口间显示空白，便于阅读
-set fillchars=vert:\ ,stl:\ ,stlnc:\
+"set fillchars=vert:\ 
+"set fillchars=vert:\ ,stl:\ ,stlnc:\
 " 高亮显示匹配的括号
 set showmatch
 " 匹配括号高亮的时间（单位是十分之一秒）
@@ -295,21 +317,34 @@ function AddJavaScript()
 	set complete-=k complete+=k
 endfunction
 "let d8_command = '/usr/local/bin/d8'
-inoremap PHPT author:<tab><tab><tab>unasm<cr>email:<tab><tab><tab>douunasm@gmail.com<cr>last_modefied:<tab><c-r>=strftime("%Y/%m/%d %X")<cr><CR>
-inoremap NOW  <c-r>=strftime("%Y/%m/%d %X")<cr>
+inoremap PHPT author:<tab><tab><tab>unasm<cr>email:<tab><tab><tab>douunasm@gmail.com<cr>Last_Modefied:<tab><c-r>=strftime("%Y/%m/%d %X")<cr><CR>
+inoremap NOW  <c-r>=strftime("%F %T")<cr>
 
 
+inoremap <silent><end> <C-R>=AppendQuote()<cr>
 func AppendQuote()
 	if &filetype != "html" 
-		let line = getline(".")
-		let num = strlen(line)-1
-		"call cursor('.')
-		if((line[num]!=";")&&(line[num]!=">")&&(line[num]!="{")&&(line[num]!="}")&&((line[num]!="/")&&(line[num-1]!="*")))
-			exec "normal $a;\<ESC>"
+		let status =  CheckLine()
+		if status == '0'
+			exec "normal $a;"
 		else 
 			exec "normal $"
 		endif
 	endif
-return "\<esc>A"
+	return "\<esc>A"
 endfunc
-inoremap <silent><end> <C-R>=AppendQuote()<CR>
+func CheckLine()
+	"这个经验，可以写一篇文章了吧
+	let line = getline(".")
+	let flag = match(line,'\c^\s*if\(.*\)\s*{\?\s*$')
+	"如果是if(){这种形式的，结尾不添加分号，如果结尾含有下面的集中符号，也不添加分号
+	if flag == '0'
+		return 1
+	endif
+	let flag = match(line,'^.*[,}{>\[*;(/]\s*$')
+	if flag == '0'
+		return "1"
+	endif
+	return "0"
+endfunc
+

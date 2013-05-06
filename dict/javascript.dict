@@ -689,16 +689,7 @@ writeln
 
 
 
-
-
-
-
-
-
-
-
-
-console.log
+debugger
 responseXML
 readyState
 XMLHttpRequest
