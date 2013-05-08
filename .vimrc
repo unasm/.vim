@@ -14,7 +14,7 @@ syntax on           " 语法高亮
 set ruler           " 显示标尺  
 set showcmd         " 输入的命令显示出来，看的清楚些  
 set cmdheight=1     " 命令行（在状态行下）的高度，设置为1  
-autocmd BufNewFile *.php,*.cpp,*.[ch],*.sh,*.java ks|call TitleSet()|'s
+autocmd BufNewFile *.css,*.js,*.php,*.cpp,*.[ch],*.sh,*.java ks|call TitleSet()|'s
 ""定义函数SetTitle，自动插入文件头 
 func TitleSet() 
 	"如果文件类型为.sh文件 
@@ -62,7 +62,8 @@ func TitleSet()
 	"新建文件后，自动定位到文件末尾
 endfunc
 "这个函数的作用就是自动修改Last_Modified的时间，格式上面自动添加注释的时间格式相同
-autocmd BufWritePre,FileWritePre *.php ks|call LastModified()
+autocmd  BufWrite  *.css,*.js,*.php ks|call LastModified()|'s
+" BufWritePre,BufWrite勉强及格，找不到合适的事件，我想要退出的时候，如果修改了，就自动修改，不然不修改
 fun LastModified()
 	let l = line("$")
 	let time = strftime("%F %T")
@@ -137,7 +138,9 @@ set ruler                   " 打开状态栏标尺
 set magic                   " 设置魔术
 set guioptions-=T           " 隐藏工具栏
 set guioptions-=m           " 隐藏菜单栏
-set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ %c:%l/%L%)\
+"set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ [%{(&fenc==\"\"?&enc:&fenc).(&bomb?\",BOM\":\"\")}]\ %c:%l/%L%)
+set statusline=\ %<%F[%1*%M%*%n%R%H]%=\%y\%(\ [%{(&fenc==\"\"?&enc:&fenc).(&bomb?\",BOM\":\"\")}]\ %c:%l/%L%)
+
 " 设置在状态行显示的信息
 set foldcolumn=0
 set foldmethod=indent 
@@ -323,7 +326,7 @@ inoremap NOW  <c-r>=strftime("%F %T")<cr>
 
 inoremap <silent><end> <C-R>=AppendQuote()<cr>
 func AppendQuote()
-	if &filetype != "html" 
+	if &filetype != "html" && &filetype !=".vimrc" && &filetype != "sh"
 		let status =  CheckLine()
 		if status == '0'
 			exec "normal $a;"
@@ -336,7 +339,7 @@ endfunc
 func CheckLine()
 	"这个经验，可以写一篇文章了吧
 	let line = getline(".")
-	let flag = match(line,'\c^\s*if\(.*\)\s*{\?\s*$')
+	let flag = match(line,'\c^\s*if\s\?\(.*\)\s*{\?\s*$')
 	"如果是if(){这种形式的，结尾不添加分号，如果结尾含有下面的集中符号，也不添加分号
 	if flag == '0'
 		return 1
@@ -345,6 +348,19 @@ func CheckLine()
 	if flag == '0'
 		return "1"
 	endif
+	let flag = match(line,'\c\sfunction\s[A-Z\s]\{1,30\}\(.*\)\s*{\?\s*$')
+	"如果是function(){这种形式的，结尾不添加分号，如果结尾含有下面的集中符号，也不添加分号,虽说有bug，但是够用了，function在一行开头失效，函数名不能长于30
+	if flag != -1
+		return 1
+	endif
 	return "0"
 endfunc
-
+"zR 打开所有的折叠
+""za Open/Close (toggle) a folded group of lines.
+"zA Open a Closed fold or close and open fold recursively.
+""zi全部 展开/关闭 折叠
+"zo 打开 (open) 在光标下的折叠
+""zc 关闭 (close) 在光标下的折叠
+"zC 循环关闭 (Close) 在光标下的所有折叠
+""zM 关闭所有可折叠区域)
+"% 在对应的大括号之前调转
