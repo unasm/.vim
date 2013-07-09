@@ -369,3 +369,12 @@ endfunc
 "zC 循环关闭 (Close) 在光标下的所有折叠
 ""zM 关闭所有可折叠区域)
 "% 在对应的大括号之前调转
+"""""""""""vundle中使用的配置"""""""""""""""""""""
+filetype off  "vundle中使用
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+Bundle 'Raimondi/delimitMate'
+Bundle 'howrujh/Mark'
+Bundle 'scrooloose/nerdcommenter'
+Bundle 'ervandew/supertab'
+"""""""""""""""""""""""""""""""""""""""""""""""
