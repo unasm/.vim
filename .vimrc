@@ -4,8 +4,9 @@ set shortmess=atI   " 启动的时候不显示那个援助乌干达儿童的提�
 "set lines=40 columns=155    " 设定窗口大小  
 set nu              " 显示行号  
 set go=             " 不要图形按钮  
-colorscheme default     " 设置背景主题  
-colorscheme koehler
+"colorscheme default     " 设置背景主题  
+colorscheme koehler   "之前之所以两个，是因为叠加之后的半透明，现在放弃（gnome不支持）
+colorscheme  slate
 set nowrap
 set guifont=Courier_New:h10:cANSI   " 设置字体  
 syntax on           " 语法高亮  
@@ -19,13 +20,13 @@ autocmd BufNewFile *.css,*.js,*.php,*.cpp,*.[ch],*.sh,*.java ks|call TitleSet()|
 func TitleSet() 
 	"如果文件类型为.sh文件 
 	let mail = "douunasm@gmail.com"
-	let author = "unasm"
 	let time = strftime("%F %T")
+	let author = 'unasm'
 	if &filetype == 'sh' 
 		call setline(1,"\#########################################################################") 
-		call append(line("."), "\# File Name: ".expand("%")) 
-		call append(line(".")+1, "\# Author :".unasm) 
-		call append(line(".")+2, "\# mail: ".mail) 
+		call append(line("."),   "\# File Name :    ".expand("%")) 
+		call append(line(".")+1, "\# Author :       ".author) 
+		call append(line(".")+2, "\# mail :         ".mail) 
 		call append(line(".")+3, "\# Last_Modified: ".time) 
 		call append(line(".")+4, "\#########################################################################") 
 		call append(line(".")+5, "\#!/bin/bash") 
@@ -33,19 +34,18 @@ func TitleSet()
 	elseif &filetype == 'php' 
 		call setline(1, "<?php") 
 		call append(line("."), "/*************************************************************************") 
-		call append(line(".")+1, "    > File Name: ".expand("%")) 
-		call append(line(".")+2, "    > Author: ".author) 
-		call append(line(".")+3, "    > Mail: ".mail) 
-		call append(line(".")+4, "    > Last_Modified: ".time) 
+		call append(line(".")+1, "    > File Name :     ".expand("%")) 
+		call append(line(".")+2, "    > Author :        ".author) 
+		call append(line(".")+3, "    > Mail :          ".mail) 
+		call append(line(".")+4, "    > Last_Modified : ".time) 
 		call append(line(".")+5, " ************************************************************************/") 
 		call append(line(".")+6, "")
 		call append(line(".")+7, "?>")
-		call cursor("6",0)
 	else 
 		call setline(1, "/*************************************************************************") 
-		call append(line("."), "    > File Name: ".expand("%")) 
-		call append(line(".")+1, "    > Author: ".author) 
-		call append(line(".")+2, "    > Mail: ".mail) 
+		call append(line("."), "    > File Name :  ".expand("%")) 
+		call append(line(".")+1, "    > Author  :      ".author) 
+		call append(line(".")+2, "    > Mail :         ".mail) 
 		call append(line(".")+3, "    > Last_Modified: ".time) 
 		call append(line(".")+4, " ************************************************************************/") 
 		call append(line(".")+5, "")
@@ -62,7 +62,7 @@ func TitleSet()
 	"新建文件后，自动定位到文件末尾
 endfunc
 "这个函数的作用就是自动修改Last_Modified的时间，格式上面自动添加注释的时间格式相同
-autocmd  BufWrite  *.css,*.js,*.php ks|call LastModified()|'s
+autocmd  BufWinLeave  *.css,*.js,*.php,*.sh ks|call LastModified()|'s
 " BufWritePre,BufWrite勉强及格，找不到合适的事件，我想要退出的时候，如果修改了，就自动修改，不然不修改
 fun LastModified()
 	let l = line("$")
@@ -281,9 +281,12 @@ set guioptions+=m
 
 
 set cursorline
-hi CursorLine   cterm=NONE ctermbg=magenta  ctermfg=white guibg=NONE guifg=white gui=underline
+hi Pmenu ctermbg=DarkCyan guibg=white guifg=DarkCyan
+hi comment term=bold guifg=#000fff ctermfg=DarkGray
+"  将注释变成这种黑灰色，不干扰视线也可以看清
+hi CursorLine   cterm=underline ctermbg=none  ctermfg=none guibg=NONE guifg=None
 set cursorcolumn
-hi CursorColumn cterm=NONE ctermbg=cyan  ctermfg=white guibg=darkened guifg=white
+hi CursorColumn cterm=None ctermbg=DarkMagenta  ctermfg=white guibg=darkened guifg=white
 "if !did_filetype()
 "	    au BufRead,BufNewFile *             setfiletype text
 "endif
@@ -320,26 +323,28 @@ function AddJavaScript()
 	set complete-=k complete+=k
 endfunction
 "let d8_command = '/usr/local/bin/d8'
-inoremap PHPT author:<tab><tab><tab>unasm<cr>email:<tab><tab><tab>douunasm@gmail.com<cr>Last_Modefied:<tab><c-r>=strftime("%Y/%m/%d %X")<cr><CR>
+inoremap PHPT author:<tab><tab><tab>unasm<cr>email:<tab><tab><tab>douunasm@gmail.com<cr>Last_modified:<tab><c-r>=strftime("%F %T")<cr><CR>
 inoremap NOW  <c-r>=strftime("%F %T")<cr>
-
-
-inoremap <silent><end> <C-R>=AppendQuote()<cr>
+let mapleader = ","
+inoremap <buffer><silent><end> <esc>:call AppendQuote()<CR><esc>A
+"inoremap <buffer><silent><end> <C-R>=AppendQuote()<cr>
 func AppendQuote()
-	if &filetype != "html" && &filetype !=".vimrc" && &filetype != "sh"
+	"最终版本
+	"if &filetype != "html" && &filetype !="vim" && &filetype != "zsh"
+		"上面四种文件都不需要加分号，html文件，vimrc，zshrc 和bash的脚本vim zsh 是.vimrc .zshrc的filetype
 		let status =  CheckLine()
 		if status == '0'
-			exec "normal $a;"
+			exec "normal A;"
 		else 
-			exec "normal $"
+			exec "normal A"
 		endif
-	endif
-	return "\<esc>A"
+	"endif
+	return 'normal'
 endfunc
 func CheckLine()
 	"这个经验，可以写一篇文章了吧
 	let line = getline(".")
-	let flag = match(line,'\c^\s*if\s\?\(.*\)\s*{\?\s*$')
+	let flag = match(line,'\c^\s*if\s\?(.*\s*{\? *$')
 	"如果是if(){这种形式的，结尾不添加分号，如果结尾含有下面的集中符号，也不添加分号
 	if flag == '0'
 		return 1
