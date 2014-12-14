@@ -1,6 +1,6 @@
 "可不可以让文件每隔一定时间自动保
-"source ~/.vimrc.bundles.local
-source ~/.vimrc.bundles
+source ~/.vimrc.bundles.local
+"source ~/.vimrc.bundles
 filetype on
 " 载入文件类型插件
 filetype plugin on
@@ -31,7 +31,7 @@ autocmd BufNewFile *.css,*.js,*.php,*.cpp,*.[ch],*.sh,*.java ks|call TitleSet()|
 ""定义函数SetTitle，自动插入文件头 
 func TitleSet() 
 	"如果文件类型为.sh文件 
-	let mail = "jiamin1@staff.sina.com.cn"
+	let mail = "unasm@sina.cn"
 	let time = strftime("%F %T")
 	let author = 'unasm'
 	if &filetype == 'sh' 
@@ -47,8 +47,8 @@ func TitleSet()
 		call setline(1, "<?php") 
 		call append(line("."), "/*************************************************************************") 
 		call append(line(".")+1, " * File Name :    ".expand("%")) 
-		call append(line(".")+2, " * Author    :    "."jiamin1") 
-		call append(line(".")+3, " * Mail      :    "."jiamin1@staff.sina.com.cn") 
+		call append(line(".")+2, " * Author    :    "."unasm") 
+		call append(line(".")+3, " * Mail      :    "."unasm@sina.cn") 
 		call append(line(".")+4, " ************************************************************************/") 
 		call append(line(".")+5, "")
 	else 
@@ -106,7 +106,7 @@ func! CompileRunGcc()
 	elseif &filetype == 'sh'
 		:!./%
 	elseif &filetype == 'php'
-		exec "!php -l %"
+		exec "!php -f %"
 	endif
 endfunc
 "C,C++的调试
@@ -135,6 +135,8 @@ set nobackup
 :set makeprg=g++\ -Wall\ \ %
 "自动保存
 set autowrite
+" 退出插入模式的时候哦u，自动保存
+au InsertLeave * write
 set ruler                   " 打开状态栏标尺
 set magic                   " 设置魔术
 set guioptions-=T           " 隐藏工具栏
