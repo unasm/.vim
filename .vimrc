@@ -95,10 +95,10 @@ inoremap <c-v> <esc>:w<cr>
 func! CompileRunGcc()
 	exec "w"
 	if &filetype == 'c'
-		exec "!gcc % -o %<"
+		exec "!gcc ./*.c -o %<"
 		exec "! ./%<"
 	elseif &filetype == 'cpp'
-		exec "!g++ % -o %<"
+		exec "!g++ % -o %<.o"
 		exec "! ./%<"
 	elseif &filetype == 'java' 
 		exec "!javac %" 
