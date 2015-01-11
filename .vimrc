@@ -1,5 +1,4 @@
 "可不可以让文件每隔一定时间自动保
-source ~/.vimrc.bundles.local
 "source ~/.vimrc.bundles
 filetype on
 " 载入文件类型插件
@@ -10,19 +9,16 @@ set shortmess=atI   " 启动的时候不显示那个援助乌干达儿童的提�
 "awinpos 5 5          " 设定窗口位置  
 "set lines=40 columns=155    " 设定窗口大小  
 set nu              " 显示行号  
+
 set go=             " 不要图形按钮  
 
+"关闭错误提示的声音
+set vb t_vb=
 "syntax on           " 语法高亮  
-
 syntax enable           " 语法高亮  
-set background=dark
-colorscheme slate
-"olorscheme default     " 设置背景主题  
-"colorscheme koehler   "之前之所以两个，是因为叠加之后的半透明，现在放弃（gnome不支持）
-"colorscheme  slate
-set nowrap
-set guifont=Courier_New:h10:cANSI   " 设置字体  
-"autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
+colorscheme desert   "之前之所以两个，是因为叠加之后的半透明，现在放弃（gnome不支持）
+set guifont=Courier_New:h14:cANSI   " 设置字体  
+autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
 "autocmd InsertEnter * se cul    " 用浅色高亮当前行  
 set ruler           " 显示标尺  
 set showcmd         " 输入的命令显示出来，看的清楚些  
@@ -53,10 +49,10 @@ func TitleSet()
 		call append(line(".")+5, "")
 	else 
 		call setline(1, "/*************************************************************************") 
-		call append(line("."), "    > File Name :  ".expand("%")) 
-		call append(line(".")+1, "    > Author  :      ".author) 
-		call append(line(".")+2, "    > Mail :         ".mail) 
-		call append(line(".")+3, "    > Last_Modified: ".time) 
+		call append(line("."), "  * File Name :  ".expand("%")) 
+		call append(line(".")+1, "  * Author  :      ".author) 
+		call append(line(".")+2, "  * Mail :         ".mail) 
+		call append(line(".")+3, "  * Last_Modified: ".time) 
 		call append(line(".")+4, " ************************************************************************/") 
 		call append(line(".")+5, "")
 	endif
@@ -209,6 +205,7 @@ set wildmenu
 " 使回格键（backspace）正常处理indent, eol, start等
 set backspace=2
 " 允许backspace和光标键跨越行边界
+set nowrap
 set whichwrap+=<,>,h,l
 " 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
 set mouse=a
