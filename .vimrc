@@ -18,7 +18,14 @@ set vb t_vb=
 syntax enable           " 语法高亮  
 colorscheme desert   "之前之所以两个，是因为叠加之后的半透明，现在放弃（gnome不支持）
 set guifont=Courier_New:h14:cANSI   " 设置字体  
-autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
+
+"该语句会导致下划线高亮失效
+"autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
+au BufLeave * set nocursorline nocursorcolumn
+au BufEnter * set cursorline cursorcolumn
+
+
+
 "autocmd InsertEnter * se cul    " 用浅色高亮当前行  
 set ruler           " 显示标尺  
 set showcmd         " 输入的命令显示出来，看的清楚些  
@@ -154,7 +161,7 @@ set noeb
 " 在处理未保存或只读文件的时候，弹出确认
 set confirm
 " 自动缩进
-"set autoindent
+set autoindent
 set cindent
 " Tab键的宽度
 set tabstop=4
@@ -387,3 +394,5 @@ map <C-H> <C-W>h<C-W>_
 map <C-m> :vertical resize +1<CR>
 map <shift><C-A-m> :vertical resize -1<CR>
 set winaltkeys="no"
+
+set fileencoding=utf8
