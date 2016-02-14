@@ -1,4 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =2
-let g:netrw_dirhist_1='/home/tianyi/Downloads/CodeIgniter_2.2.0/system/core'
-let g:netrw_dirhist_2='/var/www/html/honghaotouzi/1/config'
+let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_1='/Users/tianyi/enterprise/enter_merge/vendor/yiisoft/yii2-redis'
+let g:netrw_dirhist_2='/Users/tianyi/enterprise/enter_online'
+let g:netrw_dirhist_3='/Users/tianyi/enterprise/enter_online/lib'
+let g:netrw_dirhist_4='/Users/tianyi/Downloads/tengine-2.1.1'

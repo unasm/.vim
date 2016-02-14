@@ -1,10 +1,19 @@
 "可不可以让文件每隔一定时间自动保
-"source ~/.vimrc.bundles
+"go get -u github.com/jstemmer/gotags
+let g:neocomplete#enable_at_startup = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+
+"set shell='/bin/zsh'
+source ~/.vimrc.bundles
 filetype on
 " 载入文件类型插件
 filetype plugin on
 " 为特定文件类型载入相关缩进文件
-filetype indent on
+"filetype indent on
 set shortmess=atI   " 启动的时候不显示那个援助乌干达儿童的提示  
 "awinpos 5 5          " 设定窗口位置  
 "set lines=40 columns=155    " 设定窗口大小  
@@ -18,11 +27,6 @@ set vb t_vb=
 syntax enable           " 语法高亮  
 colorscheme desert   "之前之所以两个，是因为叠加之后的半透明，现在放弃（gnome不支持）
 set guifont=Courier_New:h14:cANSI   " 设置字体  
-
-"该语句会导致下划线高亮失效
-"autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
-au BufLeave * set nocursorline nocursorcolumn
-au BufEnter * set cursorline cursorcolumn
 
 
 
@@ -92,16 +96,14 @@ map <C-t> :NERDTreeToggle<CR>
 "打开树状文件目录列出当前目录文件.这个算是比较重要的功能，保留
 "C，C++ 按F5编译运行
 map <F5> :call CompileRunGcc()<CR>
-"inoremap <end>  <end><esc>a;
 inoremap <c-v> <esc>:w<cr>
-"自动保存文件
 func! CompileRunGcc()
 	exec "w"
 	if &filetype == 'c'
-		exec "!gcc ./*.c -o %<"
+		exec "!gcc %  -o %<"
 		exec "! ./%<"
 	elseif &filetype == 'cpp'
-		exec "!g++ % -o %<.o"
+		exec "!g++ % -o %<"
 		exec "! ./%<"
 	elseif &filetype == 'java' 
 		exec "!javac %" 
@@ -110,14 +112,30 @@ func! CompileRunGcc()
 		:!./%
 	elseif &filetype == 'php'
 		exec "!php -f %"
+	elseif &filetype == 'go'
+		exec "! go build main.go && ./main"
 	endif
 endfunc
 "C,C++的调试
-map <F6> :call Rungdb()<CR>
+map <F7> :call Rungdb()<CR>
 func! Rungdb()
 	exec "w"
-	exec "!g++ % -g -o %<"
-	exec "!gdb ./%<"
+	"exec "!g++ % -g -o %<"
+	"exec "!gdb ./%<"
+	if &filetype == 'c'
+			exec "!gcc -g %  -o %<"
+			"exec "!gcc ./*.c -o %<"
+			exec "!cgdb ./%<"
+		elseif &filetype == 'cpp'
+			"exec "!g++ % -o %<.o"
+			"exec "! ./%<"
+			exec "!g++ -g %  -o %<"
+			exec "!cgdb ./%<"
+		elseif &filetype == "go"
+			exec "!go build -gcflags '-N -l' main.go" 
+			exec "!cgdb ./%<"
+
+	endif
 endfunc
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 ""实用设置
@@ -168,8 +186,8 @@ set tabstop=4
 " 统一缩进为4
 set softtabstop=4
 set shiftwidth=4
-" 不要用空格代替制表符
-set noexpandtab
+" 用空格代替制表符
+set expandtab
 " 在行和段开始处使用制表符
 set smarttab
 " 显示行号
@@ -236,13 +254,15 @@ set smartindent
 "au BufRead,BufNewFile *  setfiletype txt
 "自动补全
 filetype plugin indent on 
+set shell=/bin/zsh
+
 "打开文件类型检测, 加了这句才可以用智能补全
 set completeopt=longest,menu
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " CTags的设定  
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"let Tlist_Ctags_Cmd = '/usr/local/bin/ctags' 
+let Tlist_Ctags_Cmd = '/usr/bin/ctags' 
 let Tlist_Sort_Type = "name"    " 按照名称排序  
 let Tlist_Inc_Winwidth = 0  "禁止自动改变当前vim窗口
 let Tlist_Use_SingleClick=1 "点击跳转
@@ -262,7 +282,10 @@ let Tlist_Max_Submenu_Items = 10
 let Tlist_Max_Tag_Length = 10
 let TlistShowTag = 1
 "let Tlist_WinWidth = 18
-set tags=/data1/www/htdocs/jiamin1/earth/tags;
+"set tags=/usr/local/go/src/tags;
+"set tags=/Users/tianyi/test/tags;
+"set tags=/usr/local/var/www/basic/tags;
+"set tags=/data1/www/htdocs/jiamin1/earth/tags;
 "设置tags  
 "set tags=tags  
 "set autochdir 
@@ -273,7 +296,15 @@ set tags=/data1/www/htdocs/jiamin1/earth/tags;
 "let g:miniBufExplMapWindowNavArrows = 1
 "let g:miniBufExplMapCTabSwitchBufs = 1
 "let g:miniBufExplModSelTarget = 1   
-nnoremap <silent><F8><F8> :TlistToggle<cr> 
+"nnoremap <silent><F8><F8> :TlistToggle<cr> 
+nnoremap <silent><F8><F8> :TagbarToggle<cr> 
+let g:tagbar_autofocus = 1
+let g:tagbar_sort = 0
+let g:tagbar_compact = 1
+let g:tagbar_indent = 1
+let g:tagbar_width = 20
+let g:tagbar_autoclose = 1
+let g:tagbar_autoshowtag = 0
 "觉得使用一个<F8>有点浪费了这个快捷键1
 inoremap l<space> <space>=<space>
 inoremap ll<space> l
@@ -293,6 +324,12 @@ hi phpComment term=bold guifg=#000fff ctermfg=DarkGray
 hi CursorLine   cterm=underline ctermbg=none  ctermfg=none guibg=NONE guifg=None
 set cursorcolumn
 hi CursorColumn cterm=None ctermbg=DarkCyan  ctermfg=white guibg=darkened guifg=white
+
+"该语句会导致下划线高亮失效
+"autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
+au BufLeave * set nocursorline nocursorcolumn
+au BufEnter * set cursorline cursorcolumn
+
 "if !did_filetype()
 "	    au BufRead,BufNewFile *             setfiletype text
 "endif
@@ -320,7 +357,7 @@ endfunction
 au filetype php call AddPHP()
 function AddPHP()
 	set dictionary-=~/.vim/dict/php_funclist.txt dictionary+=~/.vim/dict/php_funclist.txt
-	set dictionary-=~/.vim/dict/ci_funclist.txt dictionary+=~/.vim/dict/ci_funclist.txt "支持ci框架
+	"set dictionary-=~/.vim/dict/ci_funclist.txt dictionary+=~/.vim/dict/ci_funclist.txt "支持ci框架
 	set complete-=k complete+=k
 endfunction
 au filetype javascript  call AddJavaScript()
@@ -391,8 +428,89 @@ map <C-J> <C-W>j<C-W>_
 map <C-K> <C-W>k<C-W>_
 map <C-L> <C-W>l<C-W>_
 map <C-H> <C-W>h<C-W>_
-map <C-m> :vertical resize +1<CR>
-map <shift><C-A-m> :vertical resize -1<CR>
+map <C-m> :vertical resize +3<CR>
 set winaltkeys="no"
 
-set fileencoding=utf8
+"set fileencoding=utf8
+set fileencodings=ucs-bom,utf-8,cp936,default,latin1
+
+let g:tagbar_type_go = {
+    \ 'ctagstype' : 'go',
+    \ 'kinds'     : [
+        \ 'p:package',
+        \ 'i:imports:1',
+        \ 'c:constants',
+        \ 'v:variables',
+        \ 't:types',
+        \ 'n:interfaces',
+        \ 'w:fields',
+        \ 'e:embedded',
+        \ 'm:methods',
+        \ 'r:constructor',
+        \ 'f:functions'
+    \ ],
+    \ 'sro' : '.',
+    \ 'kind2scope' : {
+        \ 't' : 'ctype',
+        \ 'n' : 'ntype'
+    \ },
+    \ 'scope2kind' : {
+        \ 'ctype' : 't',
+        \ 'ntype' : 'n'
+    \ },
+    \ 'ctagsbin'  : 'gotags',
+    \ 'ctagsargs' : '-sort -silent'
+	\ }
+
+if !exists('g:root_marker')
+  let g:root_marker = [".git", '.svn']
+endif
+
+function! Search_root()
+    let l:root = fnamemodify(".", ":p:h")
+
+    if !empty(g:root_marker)
+        let root_found = 0
+        let l:cur_dir = fnamemodify(l:root, ":p:h")
+        let l:prev_dir = ""
+        while l:cur_dir != l:prev_dir
+            for tags_dir in g:root_marker
+                let l:tag_path = l:cur_dir . "/" . tags_dir
+                if filereadable(l:tag_path) || isdirectory(l:tag_path)
+                    let root_found = 1 | break
+                endif
+            endfor
+
+            if root_found
+                let l:root = l:cur_dir | break
+            endif
+
+            let l:prev_dir = l:cur_dir
+            let l:cur_dir = fnamemodify(l:cur_dir, ":p:h:h")
+        endwhile
+
+        return root_found ? l:root : fnamemodify(".", ":p:h")
+    endif
+
+    return l:root
+endfunction
+
+
+function! GenerateCtags()
+    let l:root = fnamemodify(".", ":p:h")
+    exe "cd " . Search_root()
+    if &filetype == 'c' || &filetype == 'cpp'
+        "        call system("ctags -R --c++-types=+p --fields=+ailKSz --extra=+q .")
+        "        exe "TlistUpdate"
+        echo "tags update complete ... "
+    else
+        echohl  ErrorMsg | echo "Generate tags fail!" | echohl None
+    endif
+    exe "cd " . l:root
+    call system("ctags -R --c++-types=+p --fields=+ailKSz --extra=+q .")
+    exe 'set tags+=' . Search_root() .'/tags'
+endfunction
+
+
+map <silent> <F7> :call GenerateCtags()<cr>
+let g:root_marker = ["projectroot",".git","readme.txt" , '.svn']
