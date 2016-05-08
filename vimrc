@@ -1,16 +1,35 @@
 "可不可以让文件每隔一定时间自动保
+"go get -u github.com/jstemmer/gotags
+let g:neocomplete#enable_at_startup = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+
+"set shell='/bin/zsh'
+source ~/.vimrc.bundles
+filetype on
+" 载入文件类型插件
+filetype plugin on
+" 为特定文件类型载入相关缩进文件
+"filetype indent on
 set shortmess=atI   " 启动的时候不显示那个援助乌干达儿童的提示  
 "awinpos 5 5          " 设定窗口位置  
 "set lines=40 columns=155    " 设定窗口大小  
 set nu              " 显示行号  
+
 set go=             " 不要图形按钮  
-"colorscheme default     " 设置背景主题  
-colorscheme koehler   "之前之所以两个，是因为叠加之后的半透明，现在放弃（gnome不支持）
-colorscheme  slate
-set nowrap
-set guifont=Courier_New:h10:cANSI   " 设置字体  
-syntax on           " 语法高亮  
-"autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
+
+"关闭错误提示的声音
+set vb t_vb=
+"syntax on           " 语法高亮  
+syntax enable           " 语法高亮  
+colorscheme desert   "之前之所以两个，是因为叠加之后的半透明，现在放弃（gnome不支持）
+set guifont=Courier_New:h14:cANSI   " 设置字体  
+
+
+
 "autocmd InsertEnter * se cul    " 用浅色高亮当前行  
 set ruler           " 显示标尺  
 set showcmd         " 输入的命令显示出来，看的清楚些  
@@ -19,7 +38,7 @@ autocmd BufNewFile *.css,*.js,*.php,*.cpp,*.[ch],*.sh,*.java ks|call TitleSet()|
 ""定义函数SetTitle，自动插入文件头 
 func TitleSet() 
 	"如果文件类型为.sh文件 
-	let mail = "douunasm@gmail.com"
+	let mail = "unasm@sina.cn"
 	let time = strftime("%F %T")
 	let author = 'unasm'
 	if &filetype == 'sh' 
@@ -34,19 +53,17 @@ func TitleSet()
 	elseif &filetype == 'php' 
 		call setline(1, "<?php") 
 		call append(line("."), "/*************************************************************************") 
-		call append(line(".")+1, "    > File Name :     ".expand("%")) 
-		call append(line(".")+2, "    > Author :        ".author) 
-		call append(line(".")+3, "    > Mail :          ".mail) 
-		call append(line(".")+4, "    > Last_Modified : ".time) 
-		call append(line(".")+5, " ************************************************************************/") 
-		call append(line(".")+6, "")
-		call append(line(".")+7, "?>")
+		call append(line(".")+1, " * File Name :    ".expand("%")) 
+		call append(line(".")+2, " * Author    :    "."unasm") 
+		call append(line(".")+3, " * Mail      :    "."unasm@sina.cn") 
+		call append(line(".")+4, " ************************************************************************/") 
+		call append(line(".")+5, "")
 	else 
 		call setline(1, "/*************************************************************************") 
-		call append(line("."), "    > File Name :  ".expand("%")) 
-		call append(line(".")+1, "    > Author  :      ".author) 
-		call append(line(".")+2, "    > Mail :         ".mail) 
-		call append(line(".")+3, "    > Last_Modified: ".time) 
+		call append(line("."), "  * File Name :  ".expand("%")) 
+		call append(line(".")+1, "  * Author  :      ".author) 
+		call append(line(".")+2, "  * Mail :         ".mail) 
+		call append(line(".")+3, "  * Last_Modified: ".time) 
 		call append(line(".")+4, " ************************************************************************/") 
 		call append(line(".")+5, "")
 	endif
@@ -54,6 +71,7 @@ func TitleSet()
 		call append(line(".")+6, "#include<iostream>")
 		call append(line(".")+7, "using namespace std;")
 		call append(line(".")+8, "")
+		call GetSnippets(snippets_dir , 'html')
 	endif
 	if &filetype == 'c'
 		call append(line(".")+6, "#include<stdio.h>")
@@ -61,18 +79,7 @@ func TitleSet()
 	endif
 	"新建文件后，自动定位到文件末尾
 endfunc
-"这个函数的作用就是自动修改Last_Modified的时间，格式上面自动添加注释的时间格式相同
-autocmd  BufWinLeave  *.css,*.js,*.php,*.sh ks|call LastModified()|'s
-" BufWritePre,BufWrite勉强及格，找不到合适的事件，我想要退出的时候，如果修改了，就自动修改，不然不修改
-fun LastModified()
-	let l = line("$")
-	let time = strftime("%F %T")
-	exe "1," . l . 'g/^\s*\(\*\|#\|>\|"\|\/\/\)\?\s*[L]ast_Modified:\s/s/^\(\s*\(\*\|#\|>\|"\|\/\/\)\?\s*[L]ast_Modified:\s\).*/\1'.time
-endfun
-" i don't understand that
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"键盘命令
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 nmap <leader>f :find<cr>
 " 映射全选+复制 ctrl+a
 map <C-A> ggVGY
@@ -84,17 +91,16 @@ vmap <C-c> "+y
 "去空行  
 nnoremap <F2> :g/^\s*$/d<CR> 
 "比较文件  
-map <c-t> :tabnew .<CR>  
+
+map <C-t> :NERDTreeToggle<CR>
 "打开树状文件目录列出当前目录文件.这个算是比较重要的功能，保留
 "C，C++ 按F5编译运行
 map <F5> :call CompileRunGcc()<CR>
-"inoremap <end>  <end><esc>a;
 inoremap <c-v> <esc>:w<cr>
-"自动保存文件
 func! CompileRunGcc()
 	exec "w"
 	if &filetype == 'c'
-		exec "!gcc % -o %<"
+		exec "!gcc %  -o %<"
 		exec "! ./%<"
 	elseif &filetype == 'cpp'
 		exec "!g++ % -o %<"
@@ -105,15 +111,31 @@ func! CompileRunGcc()
 	elseif &filetype == 'sh'
 		:!./%
 	elseif &filetype == 'php'
-		exec "!php -l %"
+		exec "!php -f %"
+	elseif &filetype == 'go'
+		exec "! go build main.go && ./main"
 	endif
 endfunc
 "C,C++的调试
-map <F6> :call Rungdb()<CR>
+map <F7> :call Rungdb()<CR>
 func! Rungdb()
 	exec "w"
-	exec "!g++ % -g -o %<"
-	exec "!gdb ./%<"
+	"exec "!g++ % -g -o %<"
+	"exec "!gdb ./%<"
+	if &filetype == 'c'
+			exec "!gcc -g %  -o %<"
+			"exec "!gcc ./*.c -o %<"
+			exec "!cgdb ./%<"
+		elseif &filetype == 'cpp'
+			"exec "!g++ % -o %<.o"
+			"exec "! ./%<"
+			exec "!g++ -g %  -o %<"
+			exec "!cgdb ./%<"
+		elseif &filetype == "go"
+			exec "!go build -gcflags '-N -l' main.go" 
+			exec "!cgdb ./%<"
+
+	endif
 endfunc
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 ""实用设置
@@ -134,6 +156,8 @@ set nobackup
 :set makeprg=g++\ -Wall\ \ %
 "自动保存
 set autowrite
+" 退出插入模式的时候哦u，自动保存
+au InsertLeave * write
 set ruler                   " 打开状态栏标尺
 set magic                   " 设置魔术
 set guioptions-=T           " 隐藏工具栏
@@ -162,8 +186,8 @@ set tabstop=4
 " 统一缩进为4
 set softtabstop=4
 set shiftwidth=4
-" 不要用空格代替制表符
-set noexpandtab
+" 用空格代替制表符
+set expandtab
 " 在行和段开始处使用制表符
 set smarttab
 " 显示行号
@@ -194,11 +218,7 @@ set laststatus=2
 " 命令行（在状态行下）的高度，默认为1，这里是2
 set cmdheight=1
 " 侦测文件类型,以上两个全部改成1，也就是合并成为一行，节省空间
-filetype on
-" 载入文件类型插件
-filetype plugin on
-" 为特定文件类型载入相关缩进文件
-filetype indent on
+
 " 保存全局变量
 set viminfo+=!
 " 带有如下符号的单词不要被换行分割
@@ -210,6 +230,7 @@ set wildmenu
 " 使回格键（backspace）正常处理indent, eol, start等
 set backspace=2
 " 允许backspace和光标键跨越行边界
+set nowrap
 set whichwrap+=<,>,h,l
 " 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
 set mouse=a
@@ -233,42 +254,57 @@ set smartindent
 "au BufRead,BufNewFile *  setfiletype txt
 "自动补全
 filetype plugin indent on 
+set shell=/bin/zsh
+
 "打开文件类型检测, 加了这句才可以用智能补全
 set completeopt=longest,menu
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " CTags的设定  
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"let Tlist_Sort_Type = "name"    " 按照名称排序  
-"let Tlist_Inc_Winwidth = 0  "禁止自动改变当前vim窗口
-"let Tlist_Use_SingleClick=1 "点击跳转
-"let Tlist_Compart_Format = 1    " 压缩方式  
-"let Tlist_Exist_OnlyWindow = 1  " 如果只有一个buffer，kill窗口也kill掉buffer  
-"let Tlist_Close_On_Select=1 "选择后自动关闭,很好的功能
-"let Tlist_File_Fold_Auto_Close = 0  " 不要关闭其他文件的tags  
-"let Tlist_Enable_Fold_Column = 0    " 不要显示折叠树  
+
+let Tlist_Ctags_Cmd = '/usr/bin/ctags' 
+let Tlist_Sort_Type = "name"    " 按照名称排序  
+let Tlist_Inc_Winwidth = 0  "禁止自动改变当前vim窗口
+let Tlist_Use_SingleClick=1 "点击跳转
+let Tlist_Compart_Format = 1    " 压缩方式  
+let Tlist_Exist_OnlyWindow = 1  " 如果只有一个buffer，kill窗口也kill掉buffer  
+let Tlist_Close_On_Select=1 "选择后自动关闭,很好的功能
+let Tlist_File_Fold_Auto_Close = 0  " 不要关闭其他文件的tags  
+let Tlist_Enable_Fold_Column = 0    " 不要显示折叠树  
 "autocmd FileType h,cpp,cc,c set tags+=D:\tools\cpp\tags  
-"let Tlist_Show_One_File=1            "不同时显示多个文件的tag，只显示当前文件的
+let Tlist_Show_One_File=1            "不同时显示多个文件的tag，只显示当前文件的
+
+let Tlist_GainFocus_On_ToggleOpen = 1 "打开的时候获取焦点
+"let Tlist_Use_Right_Window = 1 "在右侧窗口中显示taglist窗口
+
+let Tlist_Exit_OnlyWindow = 1 "如果taglist窗口是最后一个窗口，则退出vim 
+let Tlist_Max_Submenu_Items = 10
+let Tlist_Max_Tag_Length = 10
+let TlistShowTag = 1
+"let Tlist_WinWidth = 18
+"set tags=/usr/local/go/src/tags;
+"set tags=/Users/tianyi/reading-code-of-nginx-1.9.2/nginx-1.9.2/src/tags;
+"set tags=/usr/local/var/www/basic/tags;
+"set tags=/data1/www/htdocs/jiamin1/earth/tags;
 "设置tags  
 "set tags=tags  
 "set autochdir 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "其他东东
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"""""""""""""""""""""""""""""" 
-" Tag list (ctags) 
-"""""""""""""""""""""""""""""""" 
-"let Tlist_Ctags_Cmd = '/usr/local/bin/ctags' 
-"let Tlist_Show_One_File = 1 "不同时显示多个文件的tag，只显示当前文件的 ,0,或许就是显示多个文件的吧
-"let Tlist_Exit_OnlyWindow = 1 "如果taglist窗口是最后一个窗口，则退出vim 
-"let Tlist_GainFocus_On_ToggleOpen = 1
-"let Tlist_Use_Right_Window = 1 "在右侧窗口中显示taglist窗口
-"let Tlist_WinWidth = 18
 " minibufexpl插件的一般设置
 "let g:miniBufExplMapWindowNavVim = 1
 "let g:miniBufExplMapWindowNavArrows = 1
 "let g:miniBufExplMapCTabSwitchBufs = 1
 "let g:miniBufExplModSelTarget = 1   
-nnoremap <silent><F8><F8> :TlistToggle<cr> 
+"nnoremap <silent><F8><F8> :TlistToggle<cr> 
+nnoremap <silent><F8><F8> :TagbarToggle<cr> 
+let g:tagbar_autofocus = 1
+let g:tagbar_sort = 0
+let g:tagbar_compact = 1
+let g:tagbar_indent = 1
+let g:tagbar_width = 20
+let g:tagbar_autoclose = 1
+let g:tagbar_autoshowtag = 0
 "觉得使用一个<F8>有点浪费了这个快捷键1
 inoremap l<space> <space>=<space>
 inoremap ll<space> l
@@ -279,14 +315,21 @@ set guioptions+=r
 set guioptions-=L  
 set guioptions+=m
 
-
-set cursorline
+highlight MyTagListTagName guifg=Cyan ctermfg=Cyan
 hi Pmenu ctermbg=DarkCyan guibg=white guifg=DarkCyan
 hi comment term=bold guifg=#000fff ctermfg=DarkGray
+hi phpComment term=bold guifg=#000fff ctermfg=DarkGray
 "  将注释变成这种黑灰色，不干扰视线也可以看清
+set cursorline
 hi CursorLine   cterm=underline ctermbg=none  ctermfg=none guibg=NONE guifg=None
 set cursorcolumn
-hi CursorColumn cterm=None ctermbg=DarkMagenta  ctermfg=white guibg=darkened guifg=white
+hi CursorColumn cterm=None ctermbg=DarkCyan  ctermfg=white guibg=darkened guifg=white
+
+"该语句会导致下划线高亮失效
+"autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
+au BufLeave * set nocursorline nocursorcolumn
+au BufEnter * set cursorline cursorcolumn
+
 "if !did_filetype()
 "	    au BufRead,BufNewFile *             setfiletype text
 "endif
@@ -305,6 +348,12 @@ let g:jslint_command = 'jsl'
 "autocmd FileType javascript map <silent> <F9> :make<CR>
 "jslint 尝试失败
 " css辞典
+" autocmd BufNewFile *.css,*.js,*.php,*.cpp,*.[ch],*.sh,*.java ks|call TitleSet()|'s
+au BufWritePost *.php ks|call FormatPHP()|'s
+function FormatPHP() 
+        exec "silent !php-cs-fixer fix  % --level psr2"
+        exec "redraw!"
+endfunction
 au filetype css call AddCssList()
 function AddCssList()
 	set dictionary-=~/.vim/dict/csslist.txt dictionary+=~/.vim/dict/csslist.txt
@@ -314,7 +363,7 @@ endfunction
 au filetype php call AddPHP()
 function AddPHP()
 	set dictionary-=~/.vim/dict/php_funclist.txt dictionary+=~/.vim/dict/php_funclist.txt
-	set dictionary-=~/.vim/dict/ci_funclist.txt dictionary+=~/.vim/dict/ci_funclist.txt "支持ci框架
+	"set dictionary-=~/.vim/dict/ci_funclist.txt dictionary+=~/.vim/dict/ci_funclist.txt "支持ci框架
 	set complete-=k complete+=k
 endfunction
 au filetype javascript  call AddJavaScript()
@@ -323,11 +372,13 @@ function AddJavaScript()
 	set complete-=k complete+=k
 endfunction
 "let d8_command = '/usr/local/bin/d8'
-inoremap PHPT author:<tab><tab><tab>unasm<cr>email:<tab><tab><tab>douunasm@gmail.com<cr>Last_modified:<tab><c-r>=strftime("%F %T")<cr><CR>
 inoremap NOW  <c-r>=strftime("%F %T")<cr>
 let mapleader = ","
 inoremap <buffer><silent><end> <esc>:call AppendQuote()<CR><esc>A
-"inoremap <buffer><silent><end> <C-R>=AppendQuote()<cr>
+
+
+noremap <buffer><silent><S-J> <esc>:call AppendQuote()<CR><esc>A
+inoremap <buffer><silent><end> <esc>:call AppendQuote()<CR><esc>A
 func AppendQuote()
 	"最终版本
 	"if &filetype != "html" && &filetype !="vim" && &filetype != "zsh"
@@ -369,3 +420,103 @@ endfunc
 "zC 循环关闭 (Close) 在光标下的所有折叠
 ""zM 关闭所有可折叠区域)
 "% 在对应的大括号之前调转
+
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
+set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
+
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+
+"function! PhpCheckSyntax()
+"endfunction
+map <C-J> <C-W>j<C-W>_
+map <C-K> <C-W>k<C-W>_
+map <C-L> <C-W>l<C-W>_
+map <C-H> <C-W>h<C-W>_
+map <C-m> :vertical resize +3<CR>
+set winaltkeys="no"
+
+"set fileencoding=utf8
+set fileencodings=ucs-bom,utf-8,cp936,default,latin1
+
+let g:tagbar_type_go = {
+    \ 'ctagstype' : 'go',
+    \ 'kinds'     : [
+        \ 'p:package',
+        \ 'i:imports:1',
+        \ 'c:constants',
+        \ 'v:variables',
+        \ 't:types',
+        \ 'n:interfaces',
+        \ 'w:fields',
+        \ 'e:embedded',
+        \ 'm:methods',
+        \ 'r:constructor',
+        \ 'f:functions'
+    \ ],
+    \ 'sro' : '.',
+    \ 'kind2scope' : {
+        \ 't' : 'ctype',
+        \ 'n' : 'ntype'
+    \ },
+    \ 'scope2kind' : {
+        \ 'ctype' : 't',
+        \ 'ntype' : 'n'
+    \ },
+    \ 'ctagsbin'  : 'gotags',
+    \ 'ctagsargs' : '-sort -silent'
+	\ }
+
+if !exists('g:root_marker')
+  let g:root_marker = [".git", '.svn']
+endif
+
+function! Search_root()
+    let l:root = fnamemodify(".", ":p:h")
+
+    if !empty(g:root_marker)
+        let root_found = 0
+        let l:cur_dir = fnamemodify(l:root, ":p:h")
+        let l:prev_dir = ""
+        while l:cur_dir != l:prev_dir
+            for tags_dir in g:root_marker
+                let l:tag_path = l:cur_dir . "/" . tags_dir
+                if filereadable(l:tag_path) || isdirectory(l:tag_path)
+                    let root_found = 1 | break
+                endif
+            endfor
+
+            if root_found
+                let l:root = l:cur_dir | break
+            endif
+
+            let l:prev_dir = l:cur_dir
+            let l:cur_dir = fnamemodify(l:cur_dir, ":p:h:h")
+        endwhile
+
+        return root_found ? l:root : fnamemodify(".", ":p:h")
+    endif
+
+    return l:root
+endfunction
+
+
+function! GenerateCtags()
+    let l:root = fnamemodify(".", ":p:h")
+    exe "cd " . Search_root()
+    if &filetype == 'c' || &filetype == 'cpp'
+        "        call system("ctags -R --c++-types=+p --fields=+ailKSz --extra=+q .")
+        "        exe "TlistUpdate"
+        echo "tags update complete ... "
+    else
+        echohl  ErrorMsg | echo "Generate tags fail!" | echohl None
+    endif
+    exe "cd " . l:root
+    call system("ctags -R --c++-types=+p --fields=+ailKSz --extra=+q .")
+    exe 'set tags+=' . Search_root() .'/tags'
+endfunction
+
+
+map <silent> <F7> :call GenerateCtags()<cr>
+let g:root_marker = ["projectroot",".git","readme.txt" , '.svn']
