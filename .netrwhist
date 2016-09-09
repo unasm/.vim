@@ -1,6 +1,6 @@
 let g:netrw_dirhistmax  =10
 let g:netrw_dirhist_cnt =4
-let g:netrw_dirhist_1='/Users/tianyi/enterprise/enter_merge/vendor/yiisoft/yii2-redis'
-let g:netrw_dirhist_2='/Users/tianyi/enterprise/enter_online'
-let g:netrw_dirhist_3='/Users/tianyi/enterprise/enter_online/lib'
-let g:netrw_dirhist_4='/Users/tianyi/Downloads/tengine-2.1.1'
+let g:netrw_dirhist_1='/Users/tianyi/security/src'
+let g:netrw_dirhist_2='/Users/tianyi/security'
+let g:netrw_dirhist_3='/Users/tianyi/security/src'
+let g:netrw_dirhist_4='/Users/tianyi/security/src/security'

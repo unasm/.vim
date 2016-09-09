@@ -21,6 +21,7 @@ set nu              " 显示行号
 
 set go=             " 不要图形按钮  
 
+set ff=unix
 "关闭错误提示的声音
 set vb t_vb=
 "syntax on           " 语法高亮  
@@ -38,7 +39,7 @@ autocmd BufNewFile *.css,*.js,*.php,*.cpp,*.[ch],*.sh,*.java ks|call TitleSet()|
 ""定义函数SetTitle，自动插入文件头 
 func TitleSet() 
 	"如果文件类型为.sh文件 
-	let mail = "unasm@sina.cn"
+	let mail = "doujm@jiedaibao.com"
 	let time = strftime("%F %T")
 	let author = 'unasm'
 	if &filetype == 'sh' 
@@ -53,11 +54,12 @@ func TitleSet()
 	elseif &filetype == 'php' 
 		call setline(1, "<?php") 
 		call append(line("."), "/*************************************************************************") 
-		call append(line(".")+1, " * File Name :    ".expand("%")) 
-		call append(line(".")+2, " * Author    :    "."unasm") 
-		call append(line(".")+3, " * Mail      :    "."unasm@sina.cn") 
-		call append(line(".")+4, " ************************************************************************/") 
-		call append(line(".")+5, "")
+		call append(line(".")+1, " * ") 
+		call append(line(".")+2, " * File Name :    ".expand("%")) 
+		call append(line(".")+3, " * Author    :    "."doujm") 
+		call append(line(".")+4, " * Mail      :    "."doujm@jiedaibao.com") 
+		call append(line(".")+5, " ************************************************************************/") 
+		call append(line(".")+6, "")
 	else 
 		call setline(1, "/*************************************************************************") 
 		call append(line("."), "  * File Name :  ".expand("%")) 
@@ -113,7 +115,9 @@ func! CompileRunGcc()
 	elseif &filetype == 'php'
 		exec "!php -f %"
 	elseif &filetype == 'go'
-		exec "! go build main.go && ./main"
+		exec "! go build % && ./%<"
+    elseif &filetype == 'lua'
+		exec "! luajit %"
 	endif
 endfunc
 "C,C++的调试
@@ -283,7 +287,7 @@ let Tlist_Max_Tag_Length = 10
 let TlistShowTag = 1
 "let Tlist_WinWidth = 18
 "set tags=/usr/local/go/src/tags;
-"set tags=/Users/tianyi/test/tags;
+"set tags=/Users/tianyi/reading-code-of-nginx-1.9.2/nginx-1.9.2/src/tags;
 "set tags=/usr/local/var/www/basic/tags;
 "set tags=/data1/www/htdocs/jiamin1/earth/tags;
 "设置tags  
@@ -316,19 +320,19 @@ set guioptions-=L
 set guioptions+=m
 
 highlight MyTagListTagName guifg=Cyan ctermfg=Cyan
-set cursorline
 hi Pmenu ctermbg=DarkCyan guibg=white guifg=DarkCyan
 hi comment term=bold guifg=#000fff ctermfg=DarkGray
 hi phpComment term=bold guifg=#000fff ctermfg=DarkGray
 "  将注释变成这种黑灰色，不干扰视线也可以看清
-hi CursorLine   cterm=underline ctermbg=none  ctermfg=none guibg=NONE guifg=None
-set cursorcolumn
-hi CursorColumn cterm=None ctermbg=DarkCyan  ctermfg=white guibg=darkened guifg=white
+"set cursorline
+"hi CursorLine   cterm=underline ctermbg=none  ctermfg=none guibg=NONE guifg=None
+"set cursorcolumn
+"hi CursorColumn cterm=None ctermbg=DarkCyan  ctermfg=white guibg=darkened guifg=white
 
 "该语句会导致下划线高亮失效
 "autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
-au BufLeave * set nocursorline nocursorcolumn
-au BufEnter * set cursorline cursorcolumn
+"au BufLeave * set nocursorline nocursorcolumn
+"au BufEnter * set cursorline cursorcolumn
 
 "if !did_filetype()
 "	    au BufRead,BufNewFile *             setfiletype text
@@ -348,6 +352,12 @@ let g:jslint_command = 'jsl'
 "autocmd FileType javascript map <silent> <F9> :make<CR>
 "jslint 尝试失败
 " css辞典
+"au BufWinLeave,FileWritePost,BufWritePost *.php ks|call FormatPHP()|'s
+au BufWritePost *.php ks|call FormatPHP()|'s
+function FormatPHP() 
+        exec "silent !php-cs-fixer fix  %"
+        exec "redraw!"
+endfunction
 au filetype css call AddCssList()
 function AddCssList()
 	set dictionary-=~/.vim/dict/csslist.txt dictionary+=~/.vim/dict/csslist.txt
@@ -512,5 +522,24 @@ function! GenerateCtags()
 endfunction
 
 
-map <silent> <F7> :call GenerateCtags()<cr>
+map <silent> <F7><F7> :call GenerateCtags()<cr>
 let g:root_marker = ["projectroot",".git","readme.txt" , '.svn']
+
+let g:go_fmt_command = "goimports"
+
+
+let g:php_cs_fixer_level = "symfony"              " which leve = ?
+let g:php_cs_fixer_config = "default"             " configuration
+let g:php_cs_fixer_config_file = '.php_cs'       " configuration file
+let g:php_cs_fixer_php_path = "php"               " Path to PHP
+" If you want to define specific fixers:
+let g:php_cs_fixer_fixers_list = "linefeed,short_tag,indentation"
+let g:php_cs_fixer_enable_default_mapping = 1     " Enable the mapping by
+"default (<leader>pcd)
+let g:php_cs_fixer_dry_run = 0                    " Calcommand with dry-run
+let g:php_cs_fixer_verbose = 0      
+
+
+let g:lua_compiler_name = '/usr/local/bin/luajit'
+let g:lua_check_syntax = 1
+let g:lua_complete_omni = 1
