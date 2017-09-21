@@ -7,6 +7,10 @@ let g:go_highlight_structs = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
 
+let g:auto_save = 1
+let g:auto_save_no_updatetime = 1
+let g:auto_save_silent = 1
+
 "set shell='/bin/zsh'
 source ~/.vimrc.bundles
 filetype on
@@ -19,14 +23,20 @@ set shortmess=atI   " 启动的时候不显示那个援助乌干达儿童的提�
 "set lines=40 columns=155    " 设定窗口大小  
 set nu              " 显示行号  
 
+"<c-h> => Left
+"<c-j> => Down
+"<c-k> => Up
+"<c-l> => Right
+"<c-\> => Previous split
+
 set go=             " 不要图形按钮  
 
 set ff=unix
 "关闭错误提示的声音
 set vb t_vb=
-"syntax on           " 语法高亮  
+syntax on           " 语法高亮  
+"colorscheme desert   "之前之所以两个，是因为叠加之后的半透明，现在放弃（gnome不支持）
 syntax enable           " 语法高亮  
-colorscheme desert   "之前之所以两个，是因为叠加之后的半透明，现在放弃（gnome不支持）
 set guifont=Courier_New:h14:cANSI   " 设置字体  
 
 
@@ -35,7 +45,7 @@ set guifont=Courier_New:h14:cANSI   " 设置字体
 set ruler           " 显示标尺  
 set showcmd         " 输入的命令显示出来，看的清楚些  
 set cmdheight=1     " 命令行（在状态行下）的高度，设置为1  
-autocmd BufNewFile *.css,*.js,*.php,*.cpp,*.[ch],*.sh,*.java ks|call TitleSet()|'s
+autocmd BufNewFile *.py,*.css,*.js,*.php,*.cpp,*.[ch],*.sh,*.java ks|call TitleSet()|'s
 ""定义函数SetTitle，自动插入文件头 
 func TitleSet() 
 	"如果文件类型为.sh文件 
@@ -60,12 +70,28 @@ func TitleSet()
 		call append(line(".")+4, " * Mail      :    "."doujm@jiedaibao.com") 
 		call append(line(".")+5, " ************************************************************************/") 
 		call append(line(".")+6, "")
+
+	elseif &filetype == 'python' 
+	    call setline(1, "# -*- coding: UTF-8 -*-") 
+		call append(line("."), "#") 
+		call append(line(".")+1, "# File Name    :    ".expand("%")) 
+		call append(line(".")+2, "# Author       :    "."doujm") 
+		call append(line(".")+3, "# Mail         :    "."doujm@jiedaibao.com") 
+		call append(line(".")+4, "# Create Time  :    ".time) 
+		call append(line(".")+5, "############################################### ") 
+		call append(line(".")+6, "") 
+        call append(line(".")+7, "import os") 
+		call append(line(".")+8, "import sys") 
+		call append(line(".")+9, "import numpy as np") 
+		call append(line(".")+10, "import pandas as pd") 
+		call append(line(".")+11, "import matplotlib.pyplot as plt"
+		call append(line(".")+12, "") 
 	else 
 		call setline(1, "/*************************************************************************") 
-		call append(line("."), "  * File Name :  ".expand("%")) 
-		call append(line(".")+1, "  * Author  :      ".author) 
-		call append(line(".")+2, "  * Mail :         ".mail) 
-		call append(line(".")+3, "  * Last_Modified: ".time) 
+		call append(line("."), "  * File Name :     ".expand("%")) 
+		call append(line(".")+1, "  * Author  :       ".author) 
+		call append(line(".")+2, "  * Mail :          ".mail) 
+		call append(line(".")+3, "  * Last_Modified : ".time) 
 		call append(line(".")+4, " ************************************************************************/") 
 		call append(line(".")+5, "")
 	endif
@@ -118,7 +144,10 @@ func! CompileRunGcc()
 		exec "! go build % && ./%<"
     elseif &filetype == 'lua'
 		exec "! luajit %"
+    elseif &filetype == 'python'
+		exec "! python %"
 	endif
+
 endfunc
 "C,C++的调试
 map <F7> :call Rungdb()<CR>
@@ -324,15 +353,16 @@ hi Pmenu ctermbg=DarkCyan guibg=white guifg=DarkCyan
 hi comment term=bold guifg=#000fff ctermfg=DarkGray
 hi phpComment term=bold guifg=#000fff ctermfg=DarkGray
 "  将注释变成这种黑灰色，不干扰视线也可以看清
-"set cursorline
-"hi CursorLine   cterm=underline ctermbg=none  ctermfg=none guibg=NONE guifg=None
-"set cursorcolumn
-"hi CursorColumn cterm=None ctermbg=DarkCyan  ctermfg=white guibg=darkened guifg=white
+set cursorline
+hi CursorLine   cterm=underline ctermbg=none  ctermfg=none guibg=darkened guifg=white
+set cursorcolumn
+hi CursorColumn cterm=None ctermbg=DarkCyan  ctermfg=white guibg=darkened guifg=white
 
 "该语句会导致下划线高亮失效
 "autocmd InsertLeave * se nocul  " 用浅色高亮当前行  
-"au BufLeave * set nocursorline nocursorcolumn
-"au BufEnter * set cursorline cursorcolumn
+
+au BufLeave * set nocursorline nocursorcolumn
+au BufEnter * set cursorline cursorcolumn
 
 "if !did_filetype()
 "	    au BufRead,BufNewFile *             setfiletype text
