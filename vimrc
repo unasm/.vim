@@ -97,6 +97,7 @@ map <C-t> :NERDTreeToggle<CR>
 "C，C++ 按F5编译运行
 map <F5> :call CompileRunGcc()<CR>
 inoremap <c-v> <esc>:w<cr>
+au InsertLeave * write
 func! CompileRunGcc()
 	exec "w"
 	if &filetype == 'c'
